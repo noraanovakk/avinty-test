@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet id="01" author="noranovak">
+        <comment>Create employees and departments tables with foreign keys</comment>
+        <createTable tableName="employees"
+                     remarks="Employee data">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="full_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="position" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="department_id" type="bigint"/>
+            <column name="created_at" type="timestamp" defaultValueDate="current_timestamp"/>
+            <column name="created_by" type="bigint"/>
+            <column name="modified_at" type="timestamp"/>
+            <column name="modified_by" type="bigint"/>
+        </createTable>
+
+        <createTable tableName="departments" remarks="Department data">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="manager_id" type="bigint"/>
+            <column name="created_at" type="timestamp" defaultValueDate="current_timestamp"/>
+            <column name="created_by" type="bigint"/>
+            <column name="modified_at" type="timestamp"/>
+            <column name="modified_by" type="bigint"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="employees" baseColumnNames="department_id"
+                                 constraintName="fk_employees_departments_department_id"
+                                 referencedTableName="departments"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="departments" baseColumnNames="manager_id"
+                                 constraintName="fk_departments_employees_manager_id"
+                                 referencedTableName="employees"
+                                 referencedColumnNames="id"/>
+
+        <rollback>
+            <dropAllForeignKeyConstraints baseTableName="employees"/>
+            <dropAllForeignKeyConstraints baseTableName="departments"/>
+            <dropTable tableName="departments"/>
+            <dropTable tableName="employees"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="02" author="noranovak">
+        <comment>Create roles table</comment>
+        <createTable tableName="roles" remarks="Role data">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar(20)"/>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="roles"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="03" author="noranovak">
+        <comment>Create connector table for employees and roles</comment>
+        <createTable tableName="employees_roles">
+            <column name="employee_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="employees_roles" baseColumnNames="employee_id"
+                                 constraintName="fk_employees_roles_employees" referencedTableName="employees"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="employees_roles" baseColumnNames="role_id"
+                                 constraintName="fk_employees_roles_roles" referencedTableName="roles"
+                                 referencedColumnNames="id"/>
+
+        <rollback>
+            <dropAllForeignKeyConstraints baseTableName="employees_roles"/>
+            <dropTable tableName="employees_roles"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="04" author="noranovak">
+        <comment>Insert values to roles</comment>
+        <insert tableName="roles">
+            <column name="name" value="ROLE_ADMIN"/>
+        </insert>
+        <insert tableName="roles">
+            <column name="name" value="ROLE_USER"/>
+        </insert>
+    </changeSet>
+    
+    <changeSet id="05" author="noranovak">
+        <comment>Insert system admin to employees</comment>
+        <insert tableName="employees">
+            <column name="full_name" value="John Doe"/>
+            <column name="email" value="john.doe@avinty-test.com"/>
+            <column name="position" value="SYSTEM_ADMIN"/>
+        </insert>
+
+        <insert tableName="employees_roles">
+            <column name="employee_id"
+                    valueComputed="(SELECT id FROM employees WHERE email='john.doe@avinty-test.com')"/>
+            <column name="role_id"
+                    valueComputed="(SELECT id FROM roles WHERE name='ROLE_ADMIN')"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="06" author="noranovak">
+        <comment>Insert managers to employees</comment>
+        <insert tableName="employees">
+            <column name="full_name" value="Mark Smith"/>
+            <column name="email" value="mark.smith@avinty-test.com"/>
+            <column name="position" value="MANAGER"/>
+            <column name="created_by" valueComputed="(SELECT id FROM employees WHERE email='john.doe@avinty-test.com')"/>
+        </insert>
+
+        <insert tableName="employees">
+            <column name="full_name" value="James Brown"/>
+            <column name="email" value="james.brown@avinty-test.com"/>
+            <column name="position" value="MANAGER"/>
+            <column name="created_by" valueComputed="(SELECT id FROM employees WHERE email='john.doe@avinty-test.com')"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="07" author="noranovak">
+        <comment>Insert values to departments</comment>
+        <insert tableName="departments">
+            <column name="name" value="Developers"/>
+            <column name="manager_id" valueComputed="(SELECT id FROM employees WHERE email='mark.smith@avinty-test.com')"/>
+            <column name="created_by" valueComputed="(SELECT id FROM employees WHERE email='john.doe@avinty-test.com')"/>
+        </insert>
+
+        <insert tableName="departments">
+            <column name="name" value="Marketing"/>
+            <column name="manager_id" valueComputed="(SELECT id FROM employees WHERE email='james.brown@avinty-test.com')"/>
+            <column name="created_by" valueComputed="(SELECT id FROM employees WHERE email='john.doe@avinty-test.com')"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="08" author="noranovak">
+        <comment>Update department for managers</comment>
+        <sql>UPDATE employees SET department_id = (SELECT id FROM departments WHERE name = 'Developers') WHERE email = 'mark.smith@avinty-test.com'</sql>
+        <sql>UPDATE employees SET department_id = (SELECT id FROM departments WHERE name = 'Marketing') WHERE email = 'james.brown@avinty-test.com'</sql>
+    </changeSet>
+
+    <changeSet id="09" author="noranovak">
+        <comment>Insert employees into employees</comment>
+        <insert tableName="employees">
+            <column name="full_name" value="Helen Black"/>
+            <column name="email" value="helen.black@avinty-test.com"/>
+            <column name="position" value="JAVA_DEVELOPER"/>
+            <column name="department_id" valueComputed="(SELECT id FROM departments WHERE name = 'Developers')"/>
+        </insert>
+
+        <insert tableName="employees">
+            <column name="full_name" value="Justin Stone"/>
+            <column name="email" value="justin.stone@avinty-test.com"/>
+            <column name="position" value="ANGULAR_DEVELOPER"/>
+            <column name="department_id" valueComputed="(SELECT id FROM departments WHERE name = 'Developers')"/>
+        </insert>
+
+        <insert tableName="employees">
+            <column name="full_name" value="Grace Hawk"/>
+            <column name="email" value="grace.hawk@avinty-test.com"/>
+            <column name="position" value="MARKETING_CONSULTANT"/>
+            <column name="department_id" valueComputed="(SELECT id FROM departments WHERE name = 'Marketing')"/>
+        </insert>
+
+        <insert tableName="employees">
+            <column name="full_name" value="Lily James"/>
+            <column name="email" value="lily.james@avinty-test.com"/>
+            <column name="position" value="MARKETING_CONSULTANT"/>
+            <column name="department_id" valueComputed="(SELECT id FROM departments WHERE name = 'Marketing')"/>
+        </insert>
+    </changeSet>
+    
+    <changeSet id="10" author="noranovak">
+        <comment>Update employees_roles table</comment>
+        <insert tableName="employees_roles">
+            <column name="employee_id"
+                    valueComputed="(SELECT id FROM employees WHERE email='mark.smith@avinty-test.com')"/>
+            <column name="role_id"
+                    valueComputed="(SELECT id FROM roles WHERE name='ROLE_USER')"/>
+        </insert>
+        <insert tableName="employees_roles">
+            <column name="employee_id" valueComputed="(SELECT id FROM employees WHERE email='james.brown@avinty-test.com')"/>
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name='ROLE_USER')"/>
+        </insert>
+        <insert tableName="employees_roles">
+            <column name="employee_id" valueComputed="(SELECT id FROM employees WHERE email='helen.black@avinty-test.com')"/>
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name='ROLE_USER')"/>
+        </insert>
+        <insert tableName="employees_roles">
+            <column name="employee_id" valueComputed="(SELECT id FROM employees WHERE email='justin.stone@avinty-test.com')"/>
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name='ROLE_USER')"/>
+        </insert>
+        <insert tableName="employees_roles">
+            <column name="employee_id" valueComputed="(SELECT id FROM employees WHERE email='grace.hawk@avinty-test.com')"/>
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name='ROLE_USER')"/>
+        </insert>
+        <insert tableName="employees_roles">
+            <column name="employee_id" valueComputed="(SELECT id FROM employees WHERE email='lily.james@avinty-test.com')"/>
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name='ROLE_USER')"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="11" author="noranovak">
+        <comment>Add foreign key to created by and modified by</comment>
+        <addForeignKeyConstraint baseTableName="employees" baseColumnNames="created_by"
+                                 constraintName="fk_employees_employees_created_by"
+                                 referencedTableName="employees"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="employees" baseColumnNames="modified_by"
+                                 constraintName="fk_employees_employees_modified_by"
+                                 referencedTableName="employees"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="departments" baseColumnNames="created_by"
+                                 constraintName="fk_departments_employees_created_by"
+                                 referencedTableName="employees"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="departments" baseColumnNames="modified_by"
+                                 constraintName="fk_departments_employees_modified_by"
+                                 referencedTableName="employees"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>
