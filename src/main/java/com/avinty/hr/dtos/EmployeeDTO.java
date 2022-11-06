@@ -10,13 +10,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class EmployeeDTO {
 
-    private long id;
-
     private String fullName;
 
     private String email;
-
-    private Position position;
-
-    private Department department;
 }

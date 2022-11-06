@@ -1,4 +1,23 @@
 package com.avinty.hr.services;
 
+import com.avinty.hr.entities.Employee;
+import com.avinty.hr.repositories.EmployeeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
 public class EmployeeService implements IEmployeeService {
+
+    private final EmployeeRepository employeeRepository;
+
+    @Autowired
+    public EmployeeService(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
+    }
+
+
+    @Override
+    public Iterable<Employee> findAll() {
+        return employeeRepository.findAll();
+    }
 }
