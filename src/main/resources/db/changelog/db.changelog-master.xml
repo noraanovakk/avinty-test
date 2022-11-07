@@ -241,4 +241,9 @@
                                  referencedTableName="employees"
                                  referencedColumnNames="id"/>
     </changeSet>
+
+    <changeSet id="12" author="noranovak">
+        <comment>Set created_by</comment>
+        <sql>UPDATE employees SET created_by = (SELECT id FROM employees WHERE email = 'john.doe@avinty-test.com') WHERE created_by IS NULL</sql>
+    </changeSet>
 </databaseChangeLog>

@@ -14,7 +14,7 @@ import java.util.Set;
 @Table(name = "departments")
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = {"employees"})
+@EqualsAndHashCode
 public class Department {
 
     @Id
@@ -28,6 +28,7 @@ public class Department {
     private Employee manager;
 
     @OneToMany(mappedBy = "department", fetch = FetchType.LAZY)
+    @EqualsAndHashCode.Exclude
     private Set<Employee> employees;
 
     private LocalDateTime createdAt;

@@ -22,4 +22,7 @@ public interface HrAPI {
     @PatchMapping("/department/set-manager/{managerId}")
     ResponseEntity<DepartmentDTO> updateManagerForDepartment(@PathVariable Long managerId,
                                                              @RequestBody DepartmentDTO departmentDTO);
+
+    @DeleteMapping("/department/{departmentId}")
+    ResponseEntity<Void> deleteDepartment(@PathVariable Long departmentId);
 }

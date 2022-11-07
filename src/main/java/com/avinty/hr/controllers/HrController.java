@@ -4,7 +4,6 @@ import com.avinty.hr.dtos.DepartmentDTO;
 import com.avinty.hr.dtos.EmployeeDTO;
 import com.avinty.hr.entities.Department;
 import com.avinty.hr.entities.Employee;
-import com.avinty.hr.enums.Position;
 import com.avinty.hr.services.IDepartmentService;
 import com.avinty.hr.services.IEmployeeService;
 import com.avinty.hr.utils.Mapper;
@@ -61,7 +60,7 @@ public class HrController implements HrAPI {
 
     @Override
     public ResponseEntity<DepartmentDTO> updateManagerForDepartment(Long managerId, DepartmentDTO departmentDTO) {
-        if(departmentDTO.getId() == null) {
+        if (departmentDTO.getId() == null) {
             log.error("Department must have an id");
             return ResponseEntity.badRequest().build();
         }
@@ -72,18 +71,31 @@ public class HrController implements HrAPI {
         }
         // TODO: make custom annotation to only accept employee with MANAGER position
         Optional<Employee> employee = employeeService.findById(managerId);
-        if(employee.isEmpty()) {
+        if (employee.isEmpty()) {
             log.error("Employee with id {} not found", managerId);
             return ResponseEntity.notFound().build();
         }
-        if(!Utils.isManager(employee.get())) {
+        if (!Utils.isManager(employee.get())) {
             log.error("Employee is not a manager");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        //TODO: update employee's department + modified by + midified at
+        //TODO: update employee's department + modified by
 
         Department departmentToUpdate = updateDepartment(department.get(), employee.get());
         return ResponseEntity.ok(Mapper.toDepartmentDTO(departmentService.save(departmentToUpdate)));
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteDepartment(Long departmentId) {
+        Optional<Department> department = departmentService.findById(departmentId);
+        if (department.isEmpty()) {
+            log.error("Department with id {} not found", departmentId);
+            return ResponseEntity.notFound().build();
+        }
+        // Set department to null for employees
+        employeeService.updateAllByDepartment(department.get());
+        departmentService.deleteById(departmentId);
+        return ResponseEntity.ok().build();
     }
 
     private Department updateDepartment(Department department, Employee employee) {

@@ -15,7 +15,7 @@ import java.util.Set;
 @Table(name = "employees")
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = {"roles", "department"})
+@EqualsAndHashCode
 public class Employee {
 
     @Id
@@ -31,6 +31,7 @@ public class Employee {
 
     @JoinColumn(name = "department_id")
     @ManyToOne(fetch = FetchType.LAZY)
+    @EqualsAndHashCode.Exclude
     private Department department;
 
     private LocalDateTime createdAt;
@@ -46,5 +47,6 @@ public class Employee {
     private Employee modifiedBy;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "employeesForRole")
+    @EqualsAndHashCode.Exclude
     private Set<Role> roles;
 }
