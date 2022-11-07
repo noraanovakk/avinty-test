@@ -2,17 +2,19 @@ package com.avinty.hr.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
 @Table(name = "departments")
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(exclude = {"employees"})
 public class Department {
 
     @Id
@@ -23,7 +25,10 @@ public class Department {
 
     @JoinColumn(name = "manager_id", nullable = false)
     @OneToOne(fetch = FetchType.LAZY)
-    private Employee managerId;
+    private Employee manager;
+
+    @OneToMany(mappedBy = "department", fetch = FetchType.LAZY)
+    private Set<Employee> employees;
 
     private LocalDateTime createdAt;
 
@@ -33,7 +38,7 @@ public class Department {
 
     private LocalDateTime modifiedAt;
 
-    @JoinColumn(name = "modified_by", nullable = true)
+    @JoinColumn(name = "modified_by")
     @ManyToOne(fetch = FetchType.LAZY)
     private Employee modifiedBy;
 }

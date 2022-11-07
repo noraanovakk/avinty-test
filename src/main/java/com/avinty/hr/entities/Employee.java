@@ -15,7 +15,7 @@ import java.util.Set;
 @Table(name = "employees")
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = {"roles"})
+@EqualsAndHashCode(exclude = {"roles", "department"})
 public class Employee {
 
     @Id
@@ -29,7 +29,7 @@ public class Employee {
     @Enumerated(EnumType.STRING)
     private Position position;
 
-    @JoinColumn(name = "department_id", nullable = false)
+    @JoinColumn(name = "department_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Department department;
 
@@ -41,7 +41,7 @@ public class Employee {
 
     private LocalDateTime modifiedAt;
 
-    @JoinColumn(name = "modified_by", nullable = true)
+    @JoinColumn(name = "modified_by")
     @ManyToOne(fetch = FetchType.LAZY)
     private Employee modifiedBy;
 

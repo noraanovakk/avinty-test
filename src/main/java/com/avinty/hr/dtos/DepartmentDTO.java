@@ -3,6 +3,8 @@ package com.avinty.hr.dtos;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.List;
+
 @AllArgsConstructor
 @Data
 public class DepartmentDTO {
@@ -12,4 +14,6 @@ public class DepartmentDTO {
     private String name;
 
     private EmployeeDTO manager;
+
+    private List<EmployeeDTO> employees;
 }

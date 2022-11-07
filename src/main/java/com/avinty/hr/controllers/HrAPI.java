@@ -1,5 +1,6 @@
 package com.avinty.hr.controllers;
 
+import com.avinty.hr.dtos.DepartmentDTO;
 import com.avinty.hr.dtos.EmployeeDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,4 +13,7 @@ public interface HrAPI {
 
     @GetMapping("/employees")
     ResponseEntity<List<EmployeeDTO>> getAllEmployees();
+
+    @GetMapping("/dep-emp")
+    ResponseEntity<List<DepartmentDTO>> getAllDepartmentsWithEmployees();
 }
