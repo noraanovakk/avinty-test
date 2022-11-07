@@ -1,7 +1,6 @@
 package com.avinty.hr.security;
 
 import com.avinty.hr.entities.Employee;
-import com.avinty.hr.entities.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
 
-@RequestMapping("/API/V1/auth")
 @CrossOrigin(origins = "localhost:5000")
+@RequestMapping("/API/V1/auth")
 public interface AuthAPI {
 
     @PostMapping("/signin")
