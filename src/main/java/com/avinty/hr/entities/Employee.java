@@ -1,10 +1,7 @@
 package com.avinty.hr.entities;
 
 import com.avinty.hr.enums.Position;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -16,6 +13,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
+@ToString
 public class Employee {
 
     @Id
@@ -25,6 +23,8 @@ public class Employee {
     private String fullName;
 
     private String email;
+
+    private String password;
 
     @Enumerated(EnumType.STRING)
     private Position position;
@@ -46,7 +46,8 @@ public class Employee {
     @ManyToOne(fetch = FetchType.LAZY)
     private Employee modifiedBy;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "employeesForRole")
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE, mappedBy = "employeesForRole")
     @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<Role> roles;
 }

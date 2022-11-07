@@ -246,4 +246,27 @@
         <comment>Set created_by</comment>
         <sql>UPDATE employees SET created_by = (SELECT id FROM employees WHERE email = 'john.doe@avinty-test.com') WHERE created_by IS NULL</sql>
     </changeSet>
+
+    <changeSet id="13" author="noranovak">
+        <comment>Add password to employees</comment>
+        <addColumn tableName="employees">
+            <column name="password" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="14" author="noranovak">
+        <comment>Set password to employees</comment>
+        <sql>UPDATE employees SET password = '$2y$10$rVGe2is0n/SVcWQwMfqyoOQKnG72UaNjfFyTVKYOpxv1iA3jHV5G6' WHERE email = 'john.doe@avinty-test.com'</sql>
+        <sql>UPDATE employees SET password = '$2y$10$6YrdnSokqTDA6K4me0vPf.jULc9CWOyG.naJbhoOaft2.cmN.0.TS' WHERE email = 'mark.smith@avinty-test.com'</sql>
+        <sql>UPDATE employees SET password = '$2y$10$P1aFDfkKHdeoAy7UAtmXoOUFmr2oVLZdxSTI0CE.AV3C9VWEt.vDi' WHERE email = 'helen.black@avinty-test.com'</sql>
+        <sql>UPDATE employees SET password = '$2y$10$y8VvIzGhvciDhLadWz1/POfmfKtrSC1BhyK6lt.lbOLYhTs25t2pi' WHERE email = 'justin.stone@avinty-test.com'</sql>
+        <sql>UPDATE employees SET password = '$2y$10$oaSYT6bBKtJkfAVePAraPe9TDj/eJ.4Cflslubfxu.YYoTdvtU7ku' WHERE email = 'james.brown@avinty-test.com'</sql>
+        <sql>UPDATE employees SET password = '$2y$10$baykNJiJca97fRJ/6zepJu0QVhMXQsJrLNnht/WQ1OU5LRN37wMre' WHERE email = 'grace.hawk@avinty-test.com'</sql>
+        <sql>UPDATE employees SET password = '$2y$10$CfeS6pIqBO7OFfcOVPb//uhDqDqqxpT6tx0b4uJeq447M8EahhnQS' WHERE email = 'lily.james@avinty-test.com'</sql>
+    </changeSet>
+
+    <changeSet id="15" author="noranovak">
+        <comment>Set password non nullable</comment>
+        <addNotNullConstraint tableName="employees" columnName="password"/>
+    </changeSet>
 </databaseChangeLog>

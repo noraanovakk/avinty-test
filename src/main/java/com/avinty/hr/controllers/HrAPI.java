@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequestMapping("/API/V1/")
+@CrossOrigin(origins = "localhost:5000")
 public interface HrAPI {
 
     @GetMapping("/employees")
