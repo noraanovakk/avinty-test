@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 public class DepartmentDTO {
 
-    private long id;
+    private Long id;
 
     private String name;
 

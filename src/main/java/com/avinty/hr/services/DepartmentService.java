@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DepartmentService implements IDepartmentService {
@@ -25,5 +26,15 @@ public class DepartmentService implements IDepartmentService {
     @Override
     public List<Department> findAllByName(String name) {
         return departmentRepository.findAllByName(name);
+    }
+
+    @Override
+    public Optional<Department> findById(Long id) {
+        return departmentRepository.findById(id);
+    }
+
+    @Override
+    public Department save(Department department) {
+        return departmentRepository.save(department);
     }
 }

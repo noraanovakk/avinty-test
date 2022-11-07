@@ -5,6 +5,8 @@ import com.avinty.hr.repositories.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class EmployeeService implements IEmployeeService {
 
@@ -19,5 +21,10 @@ public class EmployeeService implements IEmployeeService {
     @Override
     public Iterable<Employee> findAll() {
         return employeeRepository.findAll();
+    }
+
+    @Override
+    public Optional<Employee> findById(Long id) {
+        return employeeRepository.findById(id);
     }
 }
