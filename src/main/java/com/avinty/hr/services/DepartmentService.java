@@ -5,6 +5,8 @@ import com.avinty.hr.repositories.DepartmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class DepartmentService implements IDepartmentService {
 
@@ -18,5 +20,10 @@ public class DepartmentService implements IDepartmentService {
     @Override
     public Iterable<Department> findAll() {
         return departmentRepository.findAll();
+    }
+
+    @Override
+    public List<Department> findAllByName(String name) {
+        return departmentRepository.findAllByName(name);
     }
 }

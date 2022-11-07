@@ -42,4 +42,13 @@ public class HrController implements HrAPI {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(departments);
     }
+
+    @Override
+    public ResponseEntity<List<DepartmentDTO>> getDepartmentsByName(String name) {
+        List<DepartmentDTO> departments = departmentService.findAllByName(name)
+                .stream()
+                .map(Mapper::toDepartmentDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(departments);
+    }
 }
