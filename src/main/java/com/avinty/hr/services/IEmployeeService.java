@@ -12,4 +12,6 @@ public interface IEmployeeService {
     Optional<Employee> findById(Long id);
 
     void updateAllByDepartment(Department department);
+
+    Employee save(Employee employee);
 }

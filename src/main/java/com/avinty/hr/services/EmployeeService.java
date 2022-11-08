@@ -41,6 +41,11 @@ public class EmployeeService implements IEmployeeService, UserDetailsService {
     }
 
     @Override
+    public Employee save(Employee employee) {
+        return employeeRepository.save(employee);
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Employee employee = employeeRepository
                 .findByEmail(username)

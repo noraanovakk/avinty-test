@@ -12,7 +12,7 @@ import java.util.Set;
 @Table(name = "employees")
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString
 public class Employee {
 

@@ -69,7 +69,6 @@ public class HrController implements HrAPI {
             log.error("Department with id {} not found", departmentDTO.getId());
             return ResponseEntity.notFound().build();
         }
-        // TODO: make custom annotation to only accept employee with MANAGER position
         Optional<Employee> employee = employeeService.findById(managerId);
         if (employee.isEmpty()) {
             log.error("Employee with id {} not found", managerId);
@@ -79,7 +78,12 @@ public class HrController implements HrAPI {
             log.error("Employee is not a manager");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        //TODO: update employee's department + modified by
+        if(department.get().getManager() != null) {
+            Employee oldManager = updateEmployee(department.get().getManager(), null);
+            employeeService.save(oldManager);
+        }
+        Employee manager = updateEmployee(employee.get(), department.get());
+        employeeService.save(manager);
 
         Department departmentToUpdate = updateDepartment(department.get(), employee.get());
         return ResponseEntity.ok(Mapper.toDepartmentDTO(departmentService.save(departmentToUpdate)));
@@ -101,7 +105,20 @@ public class HrController implements HrAPI {
     private Department updateDepartment(Department department, Employee employee) {
         department.setManager(employee);
         department.setModifiedAt(LocalDateTime.now());
-        //TODO: update modified by
+        department.setModifiedBy(getModifier());
         return department;
+    }
+
+    private Employee updateEmployee(Employee employee, Department department) {
+        employee.setModifiedBy(getModifier());
+        employee.setModifiedAt(LocalDateTime.now());
+        employee.setDepartment(department);
+        return employee;
+    }
+
+    private Employee getModifier() {
+        Employee modifier = new Employee();
+        modifier.setId(Utils.getLoggedInUser());
+        return modifier;
     }
 }

@@ -9,7 +9,7 @@ import java.util.Collection;
 @Data
 @AllArgsConstructor
 public class JWTResponseDTO {
-    private long id;
+    private Long id;
     private String token;
     private String email;
     private Collection<? extends GrantedAuthority> authorities;
