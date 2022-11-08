@@ -7,6 +7,7 @@ import com.avinty.hr.entities.Department;
 import com.avinty.hr.entities.Employee;
 import com.avinty.hr.enums.ERole;
 import com.avinty.hr.enums.Position;
+import com.avinty.hr.exceptions.NotManagerException;
 import com.avinty.hr.security.JWTUtils;
 import com.avinty.hr.security.UserDetailsImpl;
 import com.avinty.hr.services.DepartmentService;
@@ -151,15 +152,12 @@ public class HrControllerTest {
         Assert.assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }
 
-    @Test
+    @Test(expected = NotManagerException.class)
     public void testUpdateManagerForDepartment_notManager() {
         when(departmentService.findById(1L)).thenReturn(Optional.of(department));
         when(employeeService.findById(1L)).thenReturn(Optional.of(emp1));
 
         var result = controller.updateManagerForDepartment(1L, departmentDTO);
-
-        Assert.assertNotNull(result);
-        Assert.assertEquals(HttpStatus.FORBIDDEN, result.getStatusCode());
     }
 
     @Test

@@ -4,13 +4,13 @@ import com.avinty.hr.dtos.DepartmentDTO;
 import com.avinty.hr.dtos.EmployeeDTO;
 import com.avinty.hr.entities.Department;
 import com.avinty.hr.entities.Employee;
+import com.avinty.hr.exceptions.NotManagerException;
 import com.avinty.hr.services.IDepartmentService;
 import com.avinty.hr.services.IEmployeeService;
 import com.avinty.hr.utils.Mapper;
 import com.avinty.hr.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,6 +24,8 @@ import java.util.stream.StreamSupport;
 @Slf4j
 public class HrController implements HrAPI {
 
+    private static final String DEPARTMENT_NOT_FOUND = "Department with id {} not found";
+    private static final String EMPLOYEE_NOT_FOUND = "Employee with id {} not found";
     private final IEmployeeService employeeService;
     private final IDepartmentService departmentService;
 
@@ -66,17 +68,16 @@ public class HrController implements HrAPI {
         }
         Optional<Department> department = departmentService.findById(departmentDTO.getId());
         if (department.isEmpty()) {
-            log.error("Department with id {} not found", departmentDTO.getId());
+            log.error(DEPARTMENT_NOT_FOUND, departmentDTO.getId());
             return ResponseEntity.notFound().build();
         }
         Optional<Employee> employee = employeeService.findById(managerId);
         if (employee.isEmpty()) {
-            log.error("Employee with id {} not found", managerId);
+            log.error(EMPLOYEE_NOT_FOUND, managerId);
             return ResponseEntity.notFound().build();
         }
         if (!Utils.isManager(employee.get())) {
-            log.error("Employee is not a manager");
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            throw new NotManagerException("Employee is not a manager");
         }
         if(department.get().getManager() != null) {
             Employee oldManager = updateEmployee(department.get().getManager(), null);
@@ -93,7 +94,7 @@ public class HrController implements HrAPI {
     public ResponseEntity<Void> deleteDepartment(Long departmentId) {
         Optional<Department> department = departmentService.findById(departmentId);
         if (department.isEmpty()) {
-            log.error("Department with id {} not found", departmentId);
+            log.error(DEPARTMENT_NOT_FOUND, departmentId);
             return ResponseEntity.notFound().build();
         }
         // Set department to null for employees
