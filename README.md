@@ -77,3 +77,7 @@ Departments to use:
 
 find the sql solution under src/resources/task2/sql-task.sql
 find the Entity Relationship Diagram under src/resources/task2/connections.png
+
+# Other
+
+find the timetable under src/resources/task2/timetable.csv

@@ -1,0 +1,40 @@
+1,create repo with project
+2,set gitignore and basic README
+3,plan database
+4,set database properties in application.properties
+5,create local database
+6,define database in liquibase
+7,set foregin keys in database in liquibase
+8,set basic values to database in liquibase
+9,"create entities, and DTOs"
+10,"create skeleton for repositories, services"
+11,create endpoint for getAllEmployees
+12,implement getAllEmployees and test with POSTMAN
+13,create endpoint for getAllDepartmentsWithEmployees
+14,implement getAllDepartmentsWithEmployees
+15,implement getAllDepartmentsWithEmployees
+16,test endpoint with POSTMAN
+17,create endpoint for getDepartmentsByName
+18,implement getDepartmentsByName
+19,test endpoint with POSTMAN
+20,create endpoint for updateManagerForDepartment
+21,implement updateManagerForDepartment
+22,test endpoint with POSTMAN
+23,create endpoint for deleteDepartment
+24,implement deleteDepartment
+25,test endpoint with POSTMAN
+26,"create authAPI, authDTOs"
+27,implement authentication
+28,update users with password
+29,testing authentication with postman
+30,testing CORS
+31,add unit tests
+32,add unit tests
+33,"refactor, create custom exception"
+34,create task2 sql tables and connections
+35,create sql trigger
+36,create sql function
+37,setup docker for postgres
+38,refactor sql file
+39,create readme
+40,create connection diagram
