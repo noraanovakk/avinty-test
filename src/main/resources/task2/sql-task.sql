@@ -1,10 +1,14 @@
-drop table if exists addresses;
-CREATE TABLE addresses (id serial primary key, postcode text NOT NULL, city text NOT NULL, street text NOT NULL, house_number text NOT NULL);
+CREATE TABLE addresses (
+	id serial primary key,
+	postcode text NOT NULL,
+	city text NOT NULL,
+	street text NOT NULL,
+	house_number text NOT NULL
+);
 
-drop table if exists patients;
 CREATE TABLE patients (
 	id serial primary key,
-	address_id integer NOT NULL, // todo: on delete...
+	address_id integer,
 	first_name text NOT NULL,
 	last_name text NOT NULL,
 	mother_name text,
@@ -14,20 +18,17 @@ CREATE TABLE patients (
 	place_of_birth text NOT NULL,
 	phone_number text,
 	email text,
-	CONSTRAINT fk_patients_addresses foreign key (address_id) references addresses (id)
+	CONSTRAINT fk_patients_addresses FOREIGN KEY (address_id) REFERENCES addresses (id) ON DELETE SET NULL
 );
 
-drop type if exists connection_type;
 CREATE TYPE connection_type as enum (
 	'MOTHER', 'FATHER', 'SIBLING', 'NEIGHBOR', 'COLLEAGUE', 'HUSBAND', 'WIFE', 'PARTNER', 'DAUGHTER', 'SON'
 );
 
-drop type if exists connection_quality;
 CREATE TYPE connection_quality as enum (
 	'POSITIVE', 'NEGATIVE', 'NEUTRAL'
 );
 
-drop table if exists connections;
 CREATE TABLE connections (
 	id serial primary key,
 	type connection_type NOT NULL,
@@ -41,11 +42,6 @@ CREATE TABLE connections (
 
 ALTER TABLE connections ADD CONSTRAINT fk_connections_patients_patient1_id FOREIGN KEY (patient1_id) REFERENCES patients (id);
 ALTER TABLE connections ADD CONSTRAINT fk_connections_patients_patient2_id FOREIGN KEY (patient2_id) REFERENCES patients (id);
-
-
-
-INSERT INTO addresses values (1, '8000', 'Fehervar', '11'); 
-INSERT INTO patients VALUES (1, 1, 'Peter', 'Kiss', 'Elena', 'male', '1995-08-11', NULL, 'Fehervar', NULL, NULL);
 
 
 CREATE OR REPLACE FUNCTION trigger_function() 
@@ -67,11 +63,8 @@ BEGIN
 		NEW.start_date := b2;
    	END IF;
 	RETURN NEW;
-	
 END
 $func$ LANGUAGE plpgsql;
-
-///////////////////////////////////
 
 
 CREATE TRIGGER trg_patient_new_connection 
@@ -79,10 +72,22 @@ AFTER INSERT ON connections
 FOR EACH ROW EXECUTE PROCEDURE trigger_function();
 
 
-///////////////////////////////////////
-
-
-
-///////////////////////////////////////
-
-
+DO
+$$
+DECLARE rec RECORD; mother TEXT;
+BEGIN
+	FOR rec IN SELECT id, mother_name FROM patients
+	LOOP
+	IF rec.mother_name IS NULL 
+		THEN
+			SELECT first_name || ' ' || last_name INTO mother 
+			FROM patients p 
+			LEFT JOIN connections c ON p.id = c.patient2_id 
+			WHERE c.type = 'MOTHER';
+			RAISE NOTICE 'Value mother: %', mother;
+			UPDATE patients SET mother_name = mother WHERE id = rec.id; 
+			
+	END IF;
+	END LOOP;
+END;
+$$;
