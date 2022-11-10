@@ -76,3 +76,4 @@ Departments to use:
 # SQL task
 
 find the sql solution under src/resources/task2/sql-task.sql
+find the Entity Relationship Diagram under src/resources/task2/connections.png
