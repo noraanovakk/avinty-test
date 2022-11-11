@@ -269,4 +269,13 @@
         <comment>Set password non nullable</comment>
         <addNotNullConstraint tableName="employees" columnName="password"/>
     </changeSet>
+
+    <changeSet id="16" author="noranovak">
+        <comment>Set null on delete cascade</comment>
+        <dropForeignKeyConstraint baseTableName="employees" constraintName="fk_employees_departments_department_id"/>
+        <addForeignKeyConstraint baseTableName="employees" baseColumnNames="department_id"
+                                 constraintName="fk_employees_departments_department_id"
+                                 referencedTableName="departments" referencedColumnNames="id"
+                                 onDelete="SET NULL"/>
+    </changeSet>
 </databaseChangeLog>

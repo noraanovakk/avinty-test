@@ -97,8 +97,6 @@ public class HrController implements HrAPI {
             log.error(DEPARTMENT_NOT_FOUND, departmentId);
             return ResponseEntity.notFound().build();
         }
-        // Set department to null for employees
-        employeeService.updateAllByDepartment(department.get());
         departmentService.deleteById(departmentId);
         return ResponseEntity.ok().build();
     }
